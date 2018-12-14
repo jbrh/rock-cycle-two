@@ -11,6 +11,20 @@
     padding-bottom: 10px;
   }
 
+  .section a.thmb {
+    padding: 0px 10px;
+    margin: 3px;
+    border: 2px solid;
+    text-decoration: none;
+    color: blue;
+    border-color:black;
+
+  }
+
+  #makespace {
+    margin-left: 10px;
+  }
+
   .footer {
   right: 0;
   bottom: 10px;
@@ -43,29 +57,31 @@
   <body>
     <div class="section">
   
-      <a class="thmb" href="#" onclick="Addtext()" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Add text</a>
+      <a class="thmb" href="#" onclick="Addtext()">Add text</a>
 
-      <a class="thmb" href="#" onclick="enableFreeDrawing()" style="padding: 0px 10px;margin:5px;border: 2px solid; text-decoration: none; color:blue; border-color:black;">Draw lines</a>
+      <a class="thmb" href="#" onclick="enableFreeDrawing()">Draw mode</a>
  
-      <a class="thmb" href="#" onclick="enableSelection()" style="padding: 0px 10px; margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Select items</a>
+      <a class="thmb" href="#" onclick="enableSelection()">Select mode</a>
 
-      <a class="thmb" href="#" onClick="deleteObjects()" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Delete selection</a>
+      <a class="thmb" href="#" onClick="deleteObjects()">Delete selection</a>
 
-      <a class="thmb" href="#" onClick="deleteCanvas()" class="btn btn-info" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Clear canvas</a>
+      <a class="thmb" href="#" onClick="deleteCanvas()" class="btn btn-info">Clear canvas</a>
 
-      <a class="thmb" href="#" id="imageDownload" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Save image</a>
+      <a class="thmb" href="#" id="imageDownload">Save image</a>
 
-      <a class="thmb" href="#" id="jsonDownload" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Save JSON</a>
+      <a class="thmb" href="#" id="jsonDownload">Save JSON</a>
 
-       <a>
-          <label for="canvas-background-picker">Canvas color:</label>
-          <input type="color" id="bg_color" value="#ffffff">
-        </a>
+      </div>
 
-        <br>upload json<input type="file" id="jsonload" />
+    <canvas id="canvasa" width="1200" height="500" style="border:1px solid #ccc"></canvas>
 
-    </div>
-    <canvas id="canvasa" width="1000" height="500" style="border:1px solid #ccc"></canvas>
+    <a>
+       <label for="canvas-background-picker">Canvas color:</label>
+       <input type="color" id="bg_color" value="#ffffff">
+    </a>
+
+    <a id="makespace">Upload json&nbsp;<input type="file" id="jsonload" /></a>
+
     <script>
    
         var canvas = new fabric.Canvas('canvasa');
@@ -296,28 +312,19 @@ function removeEvents() {
 
 function deleteCanvas() {
 
-  if (confirm('Are you sure?')) {
+  if (confirm('Do you really want to clear the canvas?')) {
   canvas.clear();
   }
 }
 
 
 function deleteObjects(){
-  var activeObject = canvas.getActiveObject(),
-    activeGroup = canvas.getActiveGroup();
-    if (activeObject) {
-        if (confirm('Are you sure?')) {
-            canvas.remove(activeObject);
-        }
-    }
-    else if (activeGroup) {
-        if (confirm('Are you sure?')) {
-            var objectsInGroup = activeGroup.getObjects();
-            canvas.discardActiveGroup();
-            objectsInGroup.forEach(function(object) {
-            canvas.remove(object);
-            });
-        }
+  var activeObjects = canvas.getActiveObjects();
+    canvas.discardActiveObject()
+    if (activeObjects.length) {
+      if (confirm('Do you really want to delete this selection?')) {
+      canvas.remove.apply(canvas, activeObjects);
+       }
     }
 }
 
