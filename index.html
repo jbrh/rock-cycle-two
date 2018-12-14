@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <link rel="shortcut icon" href="jbrhicon.png">
+
+    <style>
+
+  .footer {
+  right: 0;
+  bottom: 10px;
+  left: 0;
+  text-align: center;
+  font-size:small; 
+  color:gray;
+  background: white;
+  border-radius: 15px;
+  width: 700px;
+  margin: 0 auto;
+  opacity: 0.5;
+  padding: 10px;
+}
+
+</style>
+
+    <title>Diagraming the Rock Cycle</title>
+
+    <script src="https://rawgit.com/kangax/fabric.js/master/dist/fabric.js"></script>
+  </head>
+  <body>
+    <div class="section">
+  
+      <a class="thmb" href="#" onclick="Addtext()" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Add text</a>
+
+      <a class="thmb" href="#" onclick="enableFreeDrawing()" style="padding: 0px 10px;margin:5px;border: 2px solid; text-decoration: none; color:blue; border-color:black;">Draw lines</a>
+ 
+      <a class="thmb" href="#" onclick="enableSelection()" style="padding: 0px 10px; margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Select items</a>
+
+      <a class="thmb" href="#" onClick="deleteObjects()" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Delete selection</a>
+
+      <a class="thmb" href="#" onClick="deleteCanvas()" class="btn btn-info" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Clear canvas</a>
+
+      <a class="thmb" href="#" id="lnkDownload" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Save image</a>
+
+       <a>
+          <label for="canvas-background-picker">Canvas color:</label>
+          <input type="color" id="bg_color" value="#ffffff">
+        </a>
+    <canvas id="c" width="1000" height="500" style="border:1px solid #ccc"></canvas>
+    <script>
+      (function() {
+   
+        var canvas = new fabric.Canvas('c');
+
+        fabric.Image.fromURL('calciumcarbonate.png', function(oImg) {
+        // scale image down, and flip it, before adding it onto canvas
+            oImg.scale(0.1).set({
+              left: 100,
+              top: 100
+            });
+            
+            canvas.add(oImg);
+        });
+
+        fabric.Image.fromURL('schist.png', function(oImg) {
+        // scale image down, and flip it, before adding it onto canvas
+            oImg.scale(0.1).set({
+              left: 200,
+              top: 200
+            });
+            canvas.add(oImg);
+        });
+   
+      })();
+
+      $('#bg_color').on('input', function() { 
+          canvas.backgroundColor = $('#bg_color').val();
+          canvas.renderAll();
+      });
+
+      function Addtext() {
+   var fabText = new fabric.IText('', {
+      left: 20,
+      top: 20,
+      fontFamily: 'tahoma',
+      fill: '#0000000',
+      stroke: '#000000',
+      strokeWidth: 0.2,
+      fontSize: 18,
+      charSpacing: 50,
+      fontWeight: 400
+   });
+   canvas.add(fabText);
+   canvas.setActiveObject(fabText);
+   fabText.enterEditing()
+   fabText.hiddenTextarea.focus();
+
+   
+}
+
+canvas.on("text:editing:entered", clearText);
+
+
+function clearText(e) {
+  if (e.target.type === "i-text") {
+    if (e.target.text === "tap and type") {
+      e.target.text = "";
+      canvas.renderAll();
+    };
+  }
+}
+
+
+function enableFreeDrawing(){
+  removeEvents();
+  canvas.isDrawingMode = true;
+  canvas.freeDrawingBrush.color = "black";
+  canvas.freeDrawingBrush.width = 4;
+  canvas.renderAll();
+}
+
+function enableSelection() {
+  removeEvents();
+  changeObjectSelection(true);
+  canvas.selection = true;
+}
+
+function changeObjectSelection(value) {
+  canvas.forEachObject(function (obj) {
+    obj.selectable = value;
+  });
+  canvas.renderAll();
+}
+
+function removeEvents() {
+  canvas.isDrawingMode = false;
+  canvas.selection = false;
+  canvas.off('mouse:down');
+  canvas.off('mouse:up');
+  canvas.off('mouse:move');
+}
+
+
+function deleteCanvas() {
+
+  if (confirm('Are you sure?')) {
+  canvas.clear();
+  }
+}
+
+function deleteObjects(){
+  var activeObject = canvas.getActiveObject(),
+    activeGroup = canvas.getActiveGroup();
+    if (activeObject) {
+        if (confirm('Are you sure?')) {
+            canvas.remove(activeObject);
+        }
+    }
+    else if (activeGroup) {
+        if (confirm('Are you sure?')) {
+            var objectsInGroup = activeGroup.getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+            canvas.remove(object);
+            });
+        }
+    }
+}
+
+
+    </script>
+
+<p class="footer">
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Rock Cycle Diagramming</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.physics.drexel.edu/~tim" property="cc:attributionName" rel="cc:attributionURL">Jenny Hoffman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.
+<br/>
+This page uses Fabric.js and JQuery.
+</p>
+  </body>
+</html>
+
+
+
