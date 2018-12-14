@@ -53,12 +53,17 @@
 
       <a class="thmb" href="#" onClick="deleteCanvas()" class="btn btn-info" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Clear canvas</a>
 
-      <a class="thmb" href="#" id="lnkDownload" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Save image</a>
+      <a class="thmb" href="#" id="imageDownload" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Save image</a>
+
+      <a class="thmb" href="#" id="jsonDownload" style="padding: 0px 10px;margin:5px;border: 2px solid;text-decoration: none; color:blue; border-color:black;">Save JSON</a>
 
        <a>
           <label for="canvas-background-picker">Canvas color:</label>
           <input type="color" id="bg_color" value="#ffffff">
         </a>
+
+        <br>upload json<input type="file" id="jsonload" />
+
     </div>
     <canvas id="canvasa" width="1000" height="500" style="border:1px solid #ccc"></canvas>
     <script>
@@ -317,7 +322,7 @@ function deleteObjects(){
 }
 
 
-var imageSaver = document.getElementById('lnkDownload');
+var imageSaver = document.getElementById('imageDownload');
 imageSaver.addEventListener('click', saveImage, false);
 
 
@@ -328,6 +333,35 @@ function saveImage(e) {
     });
     this.download = 'canvas.png'
 }
+
+
+$("#jsonDownload").click(function() {
+    var json = canvas.toJSON();
+    /*$("#myTextArea").text(JSON.stringify(json));
+    var a = document.createElement("a");*/
+    var file = new Blob([JSON.stringify(json)], {
+      type: 'text/plain'
+    });
+    this.href = URL.createObjectURL(file);
+    this.download = 'json.txt';
+    //a.click();
+  });
+
+$('#jsonload').change(function(e) {
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(f) {
+      var data = f.target.result;
+      canvas.loadFromJSON(
+      JSON.parse(data),
+      canvas.renderAll.bind(canvas));
+    };
+    reader.readAsText(file);
+    });
+    $(this).val(null);
+
+
 
 
 </script>
